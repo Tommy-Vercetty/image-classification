@@ -57,8 +57,18 @@ with tf.device('/gpu:0'):
             plt.axis("off")
     plt.show()
 
+    #------------
+    #- CHANGE 1 -
+    #------------
+    #First change we make is data augmentation
+    dataAugmentation = tf.keras.Sequential([
+        tf.keras.layers.RandomFlip("horizontal"),
+        tf.keras.layers.RandomRotation(0.1),
+        tf.keras.layers.RandomZoom(0.1)
+    ])
     #create model
     model = tf.keras.models.Sequential([
+        dataAugmentation,
         Rescaling(1.0/255),
         Conv2D(16, (3,3), activation = 'relu', input_shape = (img_height,img_width, img_channels)),
         MaxPooling2D(2,2),
@@ -93,9 +103,9 @@ with tf.device('/gpu:0'):
     score = model.evaluate(test_ds, batch_size=batch_size)
     print('Test accuracy:', score[1])
 
-    #-------------------------
+    #----------------------
     #- PEFORMANCE METRICS -
-    #-------------------------
+    #----------------------
     outputClassLabelActual = []
     outputClassLabelPredictions = []
     for images, labels in test_ds:
