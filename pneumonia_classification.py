@@ -1,7 +1,8 @@
 
 
 from __future__ import print_function
-
+from sklearn.metrics import classification_report, recall_score, accuracy_score, f1_score, precision_score
+import time
 import keras
 import tensorflow as tf
 from keras.datasets import mnist
@@ -21,7 +22,7 @@ img_channels = 3
 fit = True #make fit false if you do not want to train the network again
 train_dir = 'D:/chest_xray/train'
 test_dir = 'D:/chest_xray/test'
-
+totalTimeStartingPoint = time.time()
 with tf.device('/gpu:0'):
     
     #create training,validation and test datatsets
@@ -92,7 +93,32 @@ with tf.device('/gpu:0'):
     score = model.evaluate(test_ds, batch_size=batch_size)
     print('Test accuracy:', score[1])
 
-    
+    #-------------------------
+    #- PEFORMANCE METRICS -
+    #-------------------------
+    outputClassLabelActual = []
+    outputClassLabelPredictions = []
+    for images, labels in test_ds:
+        predictions = model.predict(images)
+        outputClassLabelActual.extend(labels.numpy())
+        outputClassLabelPredictions.extend(np.argmax(predictions, axis = 1))
+
+    overallAccuracy = accuracy_score(outputClassLabelActual, outputClassLabelPredictions)
+    precision = precision_score(outputClassLabelActual, outputClassLabelPredictions, average = None)
+    recall = recall_score(outputClassLabelActual, outputClassLabelPredictions, average = None)
+    f1Score = f1_score(outputClassLabelActual, outputClassLabelPredictions, average = None)
+    print("\n << Classification Report >>\n", classification_report(outputClassLabelActual, outputClassLabelPredictions, target_names = class_names))
+    print(" Overall Accuracy:", overallAccuracy)
+    for i, class_name in enumerate(class_names):
+        print(f"\n Class: [{class_name}]")
+        print("  Precision:", precision[i])
+        print("  Recall:", recall[i])
+        print("  F1 Score:", f1Score[i])
+
+    totalTimeEndingPoint = time.time()
+    print("\n << Total Execution Time >>") 
+    print(f" {totalTimeEndingPoint - totalTimeStartingPoint:.2f} seconds\n")
+
     if fit:
         plt.plot(history.history['accuracy'])
         plt.plot(history.history['val_accuracy'])
