@@ -49,7 +49,9 @@ def modelBuilder(hp):
         Dropout(rate = hp.Float('dropout_rate', 0.2, 0.6, step = 0.1)),
         Dense(num_classes, activation = 'softmax')
     ])
-
+    #---------------------------
+    #- CHANGE 6: LEARNING RATE -
+    #---------------------------
     model.compile(
         optimizer = tf.keras.optimizers.Adam(hp.Float('learning_rate', 1e-5, 3e-4, sampling = 'log')),
         loss = 'sparse_categorical_crossentropy',
@@ -144,24 +146,24 @@ with tf.device('/gpu:0'):
     #baseModel.trainable = False
     #create model
     #model = tf.keras.models.Sequential([
-    #    dataAugmentation,
-    #    Rescaling(1.0/255),
-    #    baseModel,
-        #Conv2D(16, (3,3), activation = 'relu', input_shape = (img_height,img_width, img_channels)),
-        #MaxPooling2D(2,2),
-        #Conv2D(32, (3,3), activation = 'relu'),
-        #MaxPooling2D(2,2),
-        #Conv2D(32, (3,3), activation = 'relu'),
-        #MaxPooling2D(2,2),
-        #----------------------------------------
-        #- CHANGE 3: TRRANSLATION LAYER - GAP2D -
-        #----------------------------------------
-        #Flatten(), # flatten multidimensional outputs into single dimension for input to dense fully connected layers
-        #Dense(512, activation = 'relu'),
-    #    GlobalAveragePooling2D(),
-    #    Dense(128, activation = 'relu'),
-    #    Dropout(0.2),
-    #    Dense(num_classes, activation = 'softmax')
+    #   dataAugmentation,
+    #   Rescaling(1.0/255),
+    #   baseModel,
+    #   Conv2D(16, (3,3), activation = 'relu', input_shape = (img_height,img_width, img_channels)),
+    #   MaxPooling2D(2,2),
+    #   Conv2D(32, (3,3), activation = 'relu'),
+    #   MaxPooling2D(2,2),
+    #   Conv2D(32, (3,3), activation = 'relu'),
+    #   MaxPooling2D(2,2),
+    #----------------------------------------
+    #- CHANGE 3: TRRANSLATION LAYER - GAP2D -
+    #----------------------------------------
+    #   Flatten(), # flatten multidimensional outputs into single dimension for input to dense fully connected layers
+    #   Dense(512, activation = 'relu'),
+    #   GlobalAveragePooling2D(),
+    #   Dense(128, activation = 'relu'),
+    #   Dropout(0.2),
+    #   Dense(num_classes, activation = 'softmax')
     #])
 
     #model.compile(loss='sparse_categorical_crossentropy',
