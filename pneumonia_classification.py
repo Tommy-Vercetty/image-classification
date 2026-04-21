@@ -35,8 +35,9 @@ def modelBuilder(hp):
     #First change we make is data augmentation
     dataAugmentation = tf.keras.Sequential([
         tf.keras.layers.RandomFlip("horizontal"),
-        tf.keras.layers.RandomRotation(0.1),
-        tf.keras.layers.RandomZoom(0.1)
+        tf.keras.layers.RandomRotation(0.15),
+        tf.keras.layers.RandomZoom(0.15),
+        tf.keras.layers.RandomContrast(0.2)
         ])
     
     model = tf.keras.models.Sequential([
@@ -50,7 +51,7 @@ def modelBuilder(hp):
     ])
 
     model.compile(
-        optimizer = tf.keras.optimizers.Adam(hp.Float('learning_rate', 1e-5, 1e-3, sampling = 'log')),
+        optimizer = tf.keras.optimizers.Adam(hp.Float('learning_rate', 1e-5, 3e-4, sampling = 'log')),
         loss = 'sparse_categorical_crossentropy',
         metrics = ['accuracy']
     )
@@ -171,7 +172,7 @@ with tf.device('/gpu:0'):
     save_callback = tf.keras.callbacks.ModelCheckpoint("pneumonia.keras",save_freq='epoch',save_best_only=True)
 
     if fit:
-        history = kerasTuner.search(
+        kerasTuner.search(
             train_ds,
             validation_data = val_ds, 
             epochs = 8,
@@ -181,10 +182,10 @@ with tf.device('/gpu:0'):
         model = bestModel
         
         history = bestModel.fit(
-        train_ds,
-        validation_data=val_ds,
-        epochs=epochs,
-        class_weight=classWeightDictionary
+            train_ds,
+            validation_data=val_ds,
+            epochs=epochs,
+            class_weight=classWeightDictionary
         )
         
             #model.fit(
